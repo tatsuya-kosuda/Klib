@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 537e2a4fd18439646ab268fe8e09c539
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - _mixer: {instanceID: 0}
+  - _2dAudioDataPrefab: {instanceID: 0}
+  - _3dAudioDataPrefab: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
