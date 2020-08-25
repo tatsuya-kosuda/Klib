@@ -23,14 +23,14 @@ namespace klib
             fs.Close();
         }
 
-        public static T LoadDataFromJson<T>(string loadPath) where T : new ()
+        public static T LoadDataFromJson<T>(string loadPath, FileAccess fileAccess = FileAccess.ReadWrite) where T : new ()
         {
             if (!File.Exists(loadPath))
             {
                 return new T();
             }
 
-            FileStream fs = File.Open(loadPath, FileMode.Open);
+            FileStream fs = File.Open(loadPath, FileMode.Open, fileAccess);
             StreamReader sr = new StreamReader(fs);
             var json = JsonUtility.FromJson<T>(sr.ReadToEnd());
             sr.Close();
