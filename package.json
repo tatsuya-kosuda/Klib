@@ -2,7 +2,7 @@
   "author": "Tatsuya Kosuda",
   "name": "jp.tatsuya-kosuda.klib",
   "displayName": "Klib",
-  "version": "1.0.0-preview.1",
+  "version": "1.0.0-preview.2",
   "unity": "2020.1",
   "description": "unity utilities and extensions"
 }

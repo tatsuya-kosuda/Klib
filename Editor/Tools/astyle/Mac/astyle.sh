@@ -1,8 +1,8 @@
 #!/bin/sh
 
 ### Set up astyle affected folders
-BASE_DIR="../../../../.."
-DIR="${BASE_DIR}/Assets/App"
+CURRENT_DIR=$(pwd -P)
+DIR="${CURRENT_DIR}/Assets"
 
 init(){
   if [ ! -x "$(which astyle)" ]; then
@@ -10,13 +10,13 @@ init(){
       exit 1
   fi
 
-  if [ ! -d ${BASE_DIR}/.git/hooks ]; then
-      mkdir ${BASE_DIR}/.git/hooks
+  if [ ! -d ${CURRENT_DIR}/.git/hooks ]; then
+      mkdir ${CURRENT_DIR}/.git/hooks
   fi
-  cp -i $(pwd -P)/pre-commit.git ${BASE_DIR}/.git/hooks/pre-commit
-  cp -i $(pwd -P)/astyle.config ${BASE_DIR}
-  cp -i $(pwd -P)/astyle-ignore ${BASE_DIR}
-  chmod 777 ${BASE_DIR}/.git/hooks/pre-commit
+  cp -i $1/pre-commit.git ${CURRENT_DIR}/.git/hooks/pre-commit
+  cp -i $1/astyle.config ${CURRENT_DIR}/
+  cp -i $1/astyle-ignore ${CURRENT_DIR}/
+  chmod 777 ${CURRENT_DIR}/.git/hooks/pre-commit
   echo "SUCCESS: File copied."
 }
 
@@ -48,7 +48,7 @@ clean(){
 
 case "$1" in
     init)
-        init
+        init $2
         ;;
     run)
         run
