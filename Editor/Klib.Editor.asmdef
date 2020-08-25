@@ -1,6 +1,8 @@
 {
     "name": "Klib.Editor",
-    "references": [],
+    "references": [
+        "GUID:713d4e4010676eb40b727ad915773bf4"
+    ],
     "includePlatforms": [
         "Editor"
     ],
