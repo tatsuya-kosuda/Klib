@@ -141,7 +141,7 @@ namespace klib
             }
         }
 
-        public void StopSE(string clipName, bool withFadeOut = true)
+        public void StopSE(string clipName, bool withFadeOut = true, float fadeOutTime = 0.4f)
         {
             var audioData = _audioData.Where(x => x.ClipName == clipName && x.IsPlaying()).FirstOrDefault();
 
@@ -152,7 +152,7 @@ namespace klib
 
             if (withFadeOut)
             {
-                audioData.FadeOut(0.4f);
+                audioData.FadeOut(fadeOutTime);
             }
             else
             {
