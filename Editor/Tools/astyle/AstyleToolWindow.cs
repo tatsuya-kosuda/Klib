@@ -57,7 +57,7 @@ namespace klib
             p.StartInfo.RedirectStandardOutput = true;
             p.StartInfo.CreateNoWindow = true;
             string absolute = System.IO.Path.GetFullPath(PACKAGE_PATH);
-            string args = absolute + "/" + SH_FILE + " " + arg1 + " " + absolute;
+            string args = "-ExecutionPolicy Bypass " + absolute + "/" + SH_FILE + " " + arg1 + " " + absolute;
             p.StartInfo.Arguments = args;
             p.Start();
             p.WaitForExit();
