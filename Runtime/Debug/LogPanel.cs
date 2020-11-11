@@ -46,11 +46,16 @@ namespace klib
         private void Awake()
         {
             _autoScrollToggle.isOn = true;
+            Application.logMessageReceivedThreaded += LogCallbackHandler;
+        }
+
+        private void OnDestroy()
+        {
+            Application.logMessageReceivedThreaded -= LogCallbackHandler;
         }
 
         private void OnEnable()
         {
-            Application.logMessageReceivedThreaded += LogCallbackHandler;
             _logToggle.onValueChanged.AddListener((isOn) =>
             {
                 _visibleLogTexts.ForEach(_ => _.gameObject.SetActive(isOn));
@@ -67,7 +72,6 @@ namespace klib
 
         private void OnDisable()
         {
-            Application.logMessageReceivedThreaded -= LogCallbackHandler;
             _logToggle.onValueChanged.RemoveAllListeners();
             _warningToggle.onValueChanged.RemoveAllListeners();
             _errorToggle.onValueChanged.RemoveAllListeners();

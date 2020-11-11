@@ -12,6 +12,14 @@ namespace klib
         [SerializeField]
         private string _label = "Label";
 
+        public string Label
+        {
+            get
+            {
+                return _labelText.text;
+            }
+        }
+
         private Text _labelText;
 
         private Button _button;

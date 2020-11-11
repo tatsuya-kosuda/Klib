@@ -10,7 +10,7 @@ namespace klib
 
         private Slider _slider;
 
-        private InputField _inputField;
+        //private InputField _inputField;
 
         [SerializeField]
         private Text _valueText = null;
@@ -28,6 +28,8 @@ namespace klib
 
         private bool _setDefaultValue;
 
+        private bool _withoutCallback;
+
         private void Awake()
         {
             if (_setDefaultValue)
@@ -36,7 +38,7 @@ namespace klib
             }
 
             _slider = GetComponentInChildren<Slider>();
-            _inputField = GetComponentInChildren<InputField>();
+            //_inputField = GetComponentInChildren<InputField>();
             _labelText.text = _label;
             _slider.minValue = _min;
             _slider.maxValue = _max;
@@ -46,27 +48,34 @@ namespace klib
 
         private void OnEnable()
         {
-            _inputField.onEndEdit.AddListener(OnEndInputFieldEdit);
+            ///_inputField.onEndEdit.AddListener(OnEndInputFieldEdit);
             _slider.onValueChanged.AddListener(OnChangeSliderValue);
         }
 
         private void OnDisable()
         {
-            _inputField.onEndEdit.RemoveAllListeners();
+            //_inputField.onEndEdit.RemoveAllListeners();
             _slider.onValueChanged.RemoveAllListeners();
         }
 
-        private void OnEndInputFieldEdit(string text)
-        {
-            if (float.TryParse(text, out float res))
-            {
-                _slider.value = res;
-            }
-        }
+        //private void OnEndInputFieldEdit(string text)
+        //{
+        //    if (float.TryParse(text, out float res))
+        //    {
+        //        _slider.value = res;
+        //    }
+        //}
 
         private void OnChangeSliderValue(float val)
         {
             _valueText.text = val.ToString("F2");
+
+            if(_withoutCallback)
+            {
+                _withoutCallback = false;
+                return;
+            }
+
             onValueChanged.SafeInvoke(val);
         }
 
@@ -76,13 +85,58 @@ namespace klib
 
             if (_slider == null) { _slider = GetComponentInChildren<Slider>(); }
 
-            if (_inputField == null) { _inputField = GetComponentInChildren<InputField>(); }
+            //if (_inputField == null) { _inputField = GetComponentInChildren<InputField>(); }
 
-            _slider.value = val;
             _slider.minValue = _min;
             _slider.maxValue = _max;
+            _slider.value = val;
             _labelText.text = _label;
             _valueText.text = val.ToString("F2");
+            _defaultValue = val;
+        }
+
+        public void SetLabel(string label)
+        {
+            _label = label;
+            _labelText.text = label;
+        }
+
+        public void SetMinMax(Vector2 minmax)
+        {
+            if (_slider == null) { _slider = GetComponentInChildren<Slider>(); }
+
+            _min = minmax.x;
+            _max = minmax.y;
+            _slider.minValue = _min;
+            _slider.maxValue = _max;
+        }
+
+        public float GetValue()
+        {
+            if (_slider == null) { _slider = GetComponentInChildren<Slider>(); }
+
+            float value;
+
+            if (gameObject.activeInHierarchy == false)
+            {
+                value = _defaultValue;
+            }
+            else
+            {
+                value = _slider.value;
+            }
+
+            return value;
+        }
+
+        public void SetValueWithoutCallback(float value)
+        {
+            if (_slider == null) { _slider = GetComponentInChildren<Slider>(); }
+
+            if (value == _slider.value) { return; }
+
+            _withoutCallback = true;
+            _slider.value = value;
         }
 
     }

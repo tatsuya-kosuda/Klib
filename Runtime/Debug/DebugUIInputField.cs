@@ -27,7 +27,10 @@ namespace klib
                 _labelText.text = _label;
             }
 
-            _inputField = GetComponentInChildren<InputField>();
+            if (_inputField == null)
+            {
+                _inputField = GetComponentInChildren<InputField>();
+            }
         }
 
         private void OnEnable()
@@ -49,6 +52,13 @@ namespace klib
         {
             _setLabel = true;
             _labelText.text = label;
+        }
+
+        public void SetText(string text)
+        {
+            if (_inputField == null) { _inputField = GetComponentInChildren<InputField>(); }
+
+            _inputField.text = text;
         }
 
     }

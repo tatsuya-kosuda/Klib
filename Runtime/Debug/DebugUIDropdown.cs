@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
+using UnityEngine.EventSystems;
 
 namespace klib
 {
@@ -24,6 +26,8 @@ namespace klib
 
         [SerializeField]
         private int _defaultValue = 0;
+
+        private bool _withoutChangeCallback;
 
         private void Awake()
         {
@@ -48,6 +52,12 @@ namespace klib
 
         private void OnDropdownValueChanged(int val)
         {
+            if (_withoutChangeCallback)
+            {
+                _withoutChangeCallback = false;
+                return;
+            }
+
             onValueChanged.SafeInvoke(val);
         }
 
@@ -69,6 +79,49 @@ namespace klib
         public Dropdown.OptionData GetOptionData(int index)
         {
             return _dropDown.options[Mathf.Clamp(index, 0, _dropDown.options.Count - 1)];
+        }
+
+        public void SetValueWithoutChangeCallback(int index)
+        {
+            if (gameObject.activeInHierarchy && _dropDown.value != index) { _withoutChangeCallback = true; }
+
+            if (_dropDown == null)
+            {
+                _dropDown = GetComponentInChildren<Dropdown>();
+                _defaultValue = index;
+            }
+            else
+            {
+                _dropDown.value = index;
+            }
+        }
+
+        public void InitOptionData(string[] labels, int defaultValue = 0, bool withOutCallback = false)
+        {
+            if (_dropDown == null) { return; }
+
+            if (gameObject.activeInHierarchy && defaultValue != _dropDown.value) { _withoutChangeCallback = withOutCallback; }
+
+            var options = new List<Dropdown.OptionData>();
+            options.Add(new Dropdown.OptionData()
+            {
+                text = "-- SELECT --"
+            });
+
+            foreach (var label in labels)
+            {
+                options.Add(new Dropdown.OptionData()
+                {
+                    text = label
+                });
+            }
+
+            if (_dropDown == null) { _dropDown = GetComponentInChildren<Dropdown>(); }
+
+            _dropDown.options = options;
+            _dropDown.value = defaultValue;
+            _defaultValue = defaultValue;
+            _setDefaultValue = true;
         }
 
     }

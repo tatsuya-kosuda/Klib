@@ -25,6 +25,8 @@ namespace klib
 
         private bool _setDefaultValue;
 
+        private bool _withoutChangeValueCallback;
+
         private void Awake()
         {
             if (_setLabel == false) { _labelText.text = _label; }
@@ -48,6 +50,12 @@ namespace klib
 
         private void OnToggleValueChanged(bool isOn)
         {
+            if (_withoutChangeValueCallback)
+            {
+                _withoutChangeValueCallback = false;
+                return;
+            }
+
             onValueChanged.SafeInvoke(isOn);
         }
 
@@ -57,6 +65,11 @@ namespace klib
             _labelText.text = label;
         }
 
+        public string GetLabel()
+        {
+            return _labelText.text;
+        }
+
         public void SetDefaultValue(bool defaultValue)
         {
             _setDefaultValue = true;
@@ -64,6 +77,29 @@ namespace klib
             if (_toggle == null) { _toggle = GetComponent<Toggle>(); }
 
             _toggle.isOn = defaultValue;
+        }
+
+        public bool IsOn()
+        {
+            if (_toggle == null) { _toggle = GetComponent<Toggle>(); }
+
+            return _toggle.isOn;
+        }
+
+        public void SetValueWithoutChangeCallback(bool enable)
+        {
+            if (gameObject.activeInHierarchy) { _withoutChangeValueCallback = true; }
+
+            if (_toggle == null)
+            {
+                _toggle = GetComponent<Toggle>();
+            }
+            else
+            {
+                _toggle.isOn = enable;
+            }
+
+            _defaultValue = enable;
         }
 
     }
