@@ -71,9 +71,16 @@ namespace klib
             return msg;
         }
 
-        public static OSCBundle CreateOSCBundle(string address, params object[] objects)
+        public static OSCBundle CreateOSCBundle(params object[] msgs)
         {
-            return null;
+            var bundle = new OSCBundle();
+
+            foreach (var msg in msgs)
+            {
+                bundle.Append(msg);
+            }
+
+            return bundle;
         }
 
     }
