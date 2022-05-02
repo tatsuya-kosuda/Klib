@@ -14,7 +14,7 @@ namespace klib
                 Directory.CreateDirectory(dirPath);
             }
 
-            string json = JsonUtility.ToJson(obj);
+            string json = JsonUtility.ToJson(obj, true);
             FileStream fs = File.Create(savePath);
             var utf8_encoding = new System.Text.UTF8Encoding(false);
             StreamWriter sw = new StreamWriter(fs, utf8_encoding);
