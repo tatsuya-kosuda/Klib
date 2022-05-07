@@ -10,7 +10,7 @@ namespace klib
 
         private Slider _slider;
 
-        //private InputField _inputField;
+        private InputField _inputField;
 
         [SerializeField]
         private Text _valueText = null;
@@ -38,7 +38,7 @@ namespace klib
             }
 
             _slider = GetComponentInChildren<Slider>();
-            //_inputField = GetComponentInChildren<InputField>();
+            _inputField = GetComponentInChildren<InputField>();
             _labelText.text = _label;
             _slider.minValue = _min;
             _slider.maxValue = _max;
@@ -48,23 +48,23 @@ namespace klib
 
         private void OnEnable()
         {
-            ///_inputField.onEndEdit.AddListener(OnEndInputFieldEdit);
+            _inputField.onEndEdit.AddListener(OnEndInputFieldEdit);
             _slider.onValueChanged.AddListener(OnChangeSliderValue);
         }
 
         private void OnDisable()
         {
-            //_inputField.onEndEdit.RemoveAllListeners();
+            _inputField.onEndEdit.RemoveAllListeners();
             _slider.onValueChanged.RemoveAllListeners();
         }
 
-        //private void OnEndInputFieldEdit(string text)
-        //{
-        //    if (float.TryParse(text, out float res))
-        //    {
-        //        _slider.value = res;
-        //    }
-        //}
+        private void OnEndInputFieldEdit(string text)
+        {
+            if (float.TryParse(text, out float res))
+            {
+                _slider.value = res;
+            }
+        }
 
         private void OnChangeSliderValue(float val)
         {
@@ -85,7 +85,7 @@ namespace klib
 
             if (_slider == null) { _slider = GetComponentInChildren<Slider>(); }
 
-            //if (_inputField == null) { _inputField = GetComponentInChildren<InputField>(); }
+            if (_inputField == null) { _inputField = GetComponentInChildren<InputField>(); }
 
             _slider.minValue = _min;
             _slider.maxValue = _max;
