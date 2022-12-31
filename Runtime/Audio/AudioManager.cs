@@ -289,7 +289,7 @@ namespace klib
         {
             var audioData = _audioData.Where(x => x.ClipName == clipName).FirstOrDefault();
 
-            if (audioData == null || audioData.IsPlaying())
+            if (audioData == null)
             {
                 return false;
             }
