@@ -9,6 +9,8 @@ namespace klib
     public class AudioManager : Singleton<AudioManager>
     {
 
+        public override bool IsDontDestroyOnLoad => true;
+
         [SerializeField]
         private AudioMixer _mixer = null;
 
