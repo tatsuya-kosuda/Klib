@@ -9,32 +9,16 @@ namespace klib
     public class AudioManager : Singleton<AudioManager>
     {
 
+        private const string SE_VOL_PARAMNAME = "SEVolume", BGM_VOL_PARAMNAME = "BGMVolume", VOICE_VOL_PARAMNAME = "VOICEVolume";
+
+        [SerializeField] private AudioMixer _mixer = null;
+        [SerializeField] private AudioData _2dAudioDataPrefab = null, _3dAudioDataPrefab = null;
+        [SerializeField] private AudioClip[] _bgmClips, _seClips, _voiceClips;
+        [SerializeField] private int _maxPoolCount = 10;
+
         public override bool IsDontDestroyOnLoad => true;
 
-        [SerializeField]
-        private AudioMixer _mixer = null;
-
-        private static readonly string SE_VOL_PARAMNAME = "SEVolume";
-
-        private static readonly string BGM_VOL_PARAMNAME = "BGMVolume";
-
-        [SerializeField]
-        private AudioData _2dAudioDataPrefab = null;
-
-        [SerializeField]
-        private AudioData _3dAudioDataPrefab = null;
-
         private List<AudioData> _audioData = new List<AudioData>();
-
-        [SerializeField]
-        private AudioClip[] _bgmClips;
-
-        [SerializeField]
-        private AudioClip[] _seClips;
-
-        [SerializeField]
-        private int _maxPoolCount = 10;
-
         private Coroutine _checkAudioDataPool;
 
         protected override void AfterAwake()
@@ -42,6 +26,7 @@ namespace klib
             base.AfterAwake();
             _seClips = Resources.LoadAll<AudioClip>("SE");
             _bgmClips = Resources.LoadAll<AudioClip>("BGM");
+            _voiceClips = Resources.LoadAll<AudioClip>("VOICE");
 
             if (_maxPoolCount <= 0)
             {
@@ -64,8 +49,7 @@ namespace klib
         {
             get
             {
-                float vol = 0f;
-                _mixer.GetFloat(SE_VOL_PARAMNAME, out vol);
+                _mixer.GetFloat(SE_VOL_PARAMNAME, out float vol);
                 return vol;
             }
             set
@@ -78,13 +62,25 @@ namespace klib
         {
             get
             {
-                float vol = 0f;
-                _mixer.GetFloat(BGM_VOL_PARAMNAME, out vol);
+                _mixer.GetFloat(BGM_VOL_PARAMNAME, out float vol);
                 return vol;
             }
             set
             {
                 _mixer.SetFloat(BGM_VOL_PARAMNAME, value);
+            }
+        }
+
+        public float VOICEVolume
+        {
+            get
+            {
+                _mixer.GetFloat(VOICE_VOL_PARAMNAME, out float vol);
+                return vol;
+            }
+            set
+            {
+                _mixer.SetFloat(VOICE_VOL_PARAMNAME, value);
             }
         }
 
@@ -98,18 +94,12 @@ namespace klib
                 return;
             }
 
-            var audioData = GetAudioData();
-            audioData.Setup(_mixer.FindMatchingGroups("SE")[0], loop);
-            audioData.Play(clip, pitch, duration, maxDistance, vol);
+            PlayAudioData(clip, loop, pitch, duration, maxDistance, vol, _mixer.FindMatchingGroups("SE")[0]);
         }
 
         public void PlayBGM(string clipName, bool withFade = false, bool loop = true)
         {
-            if (IsPlayingBGM(clipName))
-            {
-                // 2重再生防止
-                return;
-            }
+            if (IsPlaying(clipName)) { return; }
 
             var clip = _bgmClips.Where(x => x.name == clipName).FirstOrDefault();
 
@@ -122,6 +112,26 @@ namespace klib
             var audioData = GetAudioData();
             audioData.Setup(_mixer.FindMatchingGroups("BGM")[0], loop);
             audioData.Play(clip, withFade);
+        }
+
+        public void PlayVoice(string clipName, bool loop = false, float pitch = 1, float duration = 0f, float maxDistance = 500, float vol = 1)
+        {
+            var clip = _voiceClips.Where(x => x.name == clipName).FirstOrDefault();
+
+            if (clip == null)
+            {
+                Debug.LogError("clip is null : clipName = " + clipName);
+                return;
+            }
+
+            PlayAudioData(clip, loop, pitch, duration, maxDistance, vol, _mixer.FindMatchingGroups("VOICE")[0]);
+        }
+
+        private void PlayAudioData(AudioClip clip, bool loop, float pitch, float duration, float maxDistance, float vol, AudioMixerGroup mixer)
+        {
+            var audioData = GetAudioData();
+            audioData.Setup(mixer, loop);
+            audioData.Play(clip, pitch, duration, maxDistance, vol);
         }
 
         public void StopBGM(string clipName, bool withFadeOut = true)
@@ -285,7 +295,7 @@ namespace klib
             _checkAudioDataPool = null;
         }
 
-        private bool IsPlayingBGM(string clipName)
+        private bool IsPlaying(string clipName)
         {
             var audioData = _audioData.Where(x => x.ClipName == clipName).FirstOrDefault();
 
