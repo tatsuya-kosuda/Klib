@@ -295,7 +295,7 @@ namespace klib
             _checkAudioDataPool = null;
         }
 
-        private bool IsPlaying(string clipName)
+        public bool IsPlaying(string clipName)
         {
             var audioData = _audioData.Where(x => x.ClipName == clipName).FirstOrDefault();
 
